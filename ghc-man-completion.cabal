@@ -34,7 +34,7 @@ maintainer:          headprogrammingczar@gmail.com
 -- A copyright notice.
 -- copyright:           
 
-category:            System
+category:            System, Tools, Development, GHC
 
 build-type:          Simple
 
