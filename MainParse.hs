@@ -1,5 +1,5 @@
 -- | Parses the GHC man page and produces a bash completion file
-module Main where
+module Main (main) where
 
 import Parser.Man.ManPage
 import Parser.Man.Options

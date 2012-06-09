@@ -26,7 +26,7 @@ modifyOption :: Flag -> Options -> Options
 modifyOption Help opts = opts {help = True}
 modifyOption (Complete s) opts = opts {completionFile = s}
 
--- | Gets command-line options
+-- | Gets command-line options based on 'optDescr'
 getOptions :: IO Options
 getOptions = do
   args <- getArgs
@@ -34,9 +34,11 @@ getOptions = do
   return (foldr modifyOption defaultOptions flags)
 
 -- | Description of command-line options for this tool
+-- '-f  --file    Destination file for bash completions'
+-- '-h  -?        Print this help message'
 optDescr :: [OptDescr Flag]
 optDescr =
   [ Option ['f'] ["file"] (ReqArg Complete "FILE") "Destination file for bash completions"
-  , Option ['h', '?'] ["help"] (NoArg Help) "Print this help"
+  , Option ['h', '?'] ["help"] (NoArg Help) "Print this help message"
   ]
 
