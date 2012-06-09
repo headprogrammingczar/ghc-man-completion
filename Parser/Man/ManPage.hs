@@ -1,36 +1,39 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 -- | Parses the GHC man page
-module Parser.Man.ManPage where
+module Parser.Man.ManPage
+( parseMan
+)where
 
 import Text.Parsec
+import Control.Monad
+import Data.Maybe
 import Data.Char
 
--- | A list of GHC parameters and their documentation
-data Result = Result [(String, String)]
-
-type Parser = Parsec String ()
-
--- skip past the intro to OPTIONS
--- then skip OPTIONS, because it is just a summary
--- accumulate these sections until we get to FILES
-parse :: Parser Result
-parse = do
+-- | The meat of the parser - takes the GHC man page contents and parses a list of parameters
+parseMan :: (Stream s m Char) => ParsecT s u m [String]
+parseMan = do
   manyTill anyChar (try (header "options"))
-  manyTill anyChar (try anyHeader)
-  -- PARSE!
-  let emptyResults = Result []
-  results <- many parseHeaders
+  results <- parseParams
+  many anyChar >> eof
+  return results
 
-  manyTill anyChar (try (header "files"))
-  return (joinResults results)
+parseParams :: (Stream s m Char) => ParsecT s u m [String]
+parseParams = do
+  results <- many1 $ do
+    spaces
+    try parseOption <|> (manyTill anyChar (try space) >> return Nothing)
+  return (catMaybes results)
 
-joinResults :: [Result] -> Result
-joinResults = foldr (\(Result a) (Result b) -> Result (a ++ b)) (Result [])
+parseOption :: (Stream s m Char) => ParsecT s u m (Maybe String)
+parseOption = do
+    char '-'
+    name <- many1 (try alphaNum <|> try (char '-') <|> try (char '?'))
+    many1 space
+    return $ Just ('-':name)
 
-parseHeaders :: Parser Result
-parseHeaders = do
-  return (Result [])
+anyHeader :: (Stream s m Char) => ParsecT s u m ()
+anyHeader = newline >> many1 (upper <|> space) >> newline >> return ()
 
-anyHeader = newline >> many1 (upper <|> space) >> newline
-
-header str = newline >> string (map toUpper str) >> newline
+header str = newline >> string (map toUpper str) >> newline >> return ()
 
