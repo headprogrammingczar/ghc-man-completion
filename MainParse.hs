@@ -27,6 +27,7 @@ printHelp = do
 
 main' handle = do
   man <- readProcess "man" ["ghc"] ""
+  man <- readProcess "perl" ["-pe", "s/\\e\\[?.*?[\\@-~]//g"] man
   case parse parseMan "man ghc" man of
     Left err -> print err
     Right opts -> hPutStrLn handle $ "complete -W \""++ unwords opts ++"\" ghc"

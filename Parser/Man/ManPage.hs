@@ -35,17 +35,13 @@ parseOption = do
 anyHeader :: (Stream s m Char) => ParsecT s u m ()
 anyHeader = do
   newline
-  try (string "[1m")
   many1 (upper <|> space)
-  try (string "[0m")
   newline
   return ()
 
 header str = do
   newline
-  try (string "[1m")
   string (map toUpper str)
-  try (string "[0m")
   newline
   return ()
 
