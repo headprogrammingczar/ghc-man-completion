@@ -42,7 +42,7 @@ build-type:          Simple
 cabal-version:       >=1.8
 
 
-executable ghc-man-parse
+executable ghc-man-completion
   -- .hs or .lhs file containing the Main module.
   main-is:             MainParse.hs
 
@@ -50,5 +50,5 @@ executable ghc-man-parse
   -- other-modules:       
 
   -- Other library packages from which modules are imported.
-  build-depends:       base ==4.5.*, parsec >3
+  build-depends:       base ==4.5.*, parsec >3, process >1
 

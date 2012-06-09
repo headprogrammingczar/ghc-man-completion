@@ -1,6 +1,7 @@
 -- | Gets command-line options
 module Parser.Man.Options
 ( getOptions
+, optDescr
 , Options(..)
 ) where
 
@@ -8,21 +9,21 @@ import System.Console.GetOpt
 import System.Environment
 import System.IO
 
-data Flag = Complete String | Verbose deriving (Eq)
+data Flag = Complete String | Help
 
 -- | Command-line options
 data Options = Options {
   completionFile :: String, -- ^ Where to write the completion file, or '-' for stdout
-  verbose :: Bool
+  help :: Bool
 } deriving (Show)
 
 defaultOptions = Options {
   completionFile = "-",
-  verbose = False
+  help = False
 }
 
 modifyOption :: Flag -> Options -> Options
-modifyOption Verbose opts = opts {verbose = True}
+modifyOption Help opts = opts {help = True}
 modifyOption (Complete s) opts = opts {completionFile = s}
 
 -- | Gets command-line options
@@ -32,9 +33,10 @@ getOptions = do
   let (flags, _, _) = getOpt RequireOrder optDescr args
   return (foldr modifyOption defaultOptions flags)
 
+-- | Description of command-line options for this tool
 optDescr :: [OptDescr Flag]
 optDescr =
   [ Option ['f'] ["file"] (ReqArg Complete "FILE") "Destination file for bash completions"
-  , Option ['v'] ["verbose"] (NoArg Verbose) "Print debug output to stderr"
+  , Option ['h', '?'] ["help"] (NoArg Help) "Print this help"
   ]
 
