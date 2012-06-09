@@ -33,7 +33,17 @@ parseOption = do
     return $ Just ('-':name)
 
 anyHeader :: (Stream s m Char) => ParsecT s u m ()
-anyHeader = newline >> many1 (upper <|> space) >> newline >> return ()
+anyHeader = do
+  newline
+  try (string "[1m")
+  many1 (upper <|> space)
+  try (string "[0m")
+  newline
+  return ()
 
-header str = newline >> string (map toUpper str) >> newline >> return ()
+header str = do
+  newline
+  string (map toUpper str)
+  newline
+  return ()
 
