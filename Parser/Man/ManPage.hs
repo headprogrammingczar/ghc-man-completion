@@ -43,7 +43,9 @@ anyHeader = do
 
 header str = do
   newline
+  try (string "[1m")
   string (map toUpper str)
+  try (string "[0m")
   newline
   return ()
 
