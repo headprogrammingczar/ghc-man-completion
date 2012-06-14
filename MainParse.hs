@@ -30,6 +30,6 @@ main' handle = do
   man <- readProcess "perl" ["-pe", "s/\\e\\[?.*?[\\@-~]//g"] man
   case parse parseMan "man ghc" man of
     Left err -> print err
-    Right opts -> hPutStrLn handle $ "complete -W \""++ unwords opts ++"\" ghc"
+    Right opts -> hPutStrLn handle $ "complete -f -W \""++ unwords opts ++"\" ghc"
   return ()
 
