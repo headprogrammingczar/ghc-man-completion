@@ -9,6 +9,7 @@ import Text.Parsec
 import Control.Monad
 import Data.Maybe
 import Data.Char
+import Data.List
 
 -- | The meat of the parser - takes the GHC man page contents and parses a list of parameters
 parseMan :: (Stream s m Char) => ParsecT s u m [String]
@@ -16,7 +17,7 @@ parseMan = do
   manyTill anyChar (try (header "options"))
   results <- parseParams
   many anyChar >> eof
-  return results
+  return (nub results)
 
 parseParams :: (Stream s m Char) => ParsecT s u m [String]
 parseParams = do
